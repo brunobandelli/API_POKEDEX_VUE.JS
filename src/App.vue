@@ -6,8 +6,8 @@
            <!-- <hr>
            <h4 class="is-size-4">Pokedex</h4> -->
            <input type="text" name="" id="" placeholder="Buscar Pokemon pelo nome" v-model="busca" class="input is-rounded">
-           <button class="button is-fullwidth is-primary" id="buscaBtn" >Buscar</button>
-      <div v-for="(poke, index) in pokemons" :key="index">
+           <button class="button is-fullwidth is-primary" id="buscaBtn" @click="buscar" >Buscar</button>
+      <div v-for="(poke, index) in filteredPokemons" :key="poke.url">
         <Pokemon :name="poke.name" :url="poke.url" :num="index+1"/>
       </div>
     </div>
@@ -23,6 +23,7 @@ export default {
   data(){
     return{
       pokemons: [],
+      filteredPokemons: [],
       busca:''
     }
   },
@@ -30,10 +31,32 @@ export default {
     axios.get("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0").then(res=> {
       console.log("Pegou a lista de Pokémons");
       this.pokemons = res.data.results;
+      this.filteredPokemons = res.data.results;
     })
   },
   components: {
     Pokemon
+  },
+  methods:{
+    buscar: function(){
+        this.filteredPokemons = this.pokemons;
+      if(this.busca == '' || this.busca == ' '){
+        this.filteredPokemons = this.pokemons
+      }else{
+        this.filteredPokemons = this.pokemons.filter(pokemon => pokemon.name == this.busca)
+      }
+    }
+  },
+  computed: {
+    /*
+    resultadoBusca: function(){
+      if(this.busca == '' || this.busca == ' '){
+        return this.pokemons
+      }else{
+        return this.pokemons.filter( pokemon => pokemon.name == this.busca )
+      }
+    }
+    */
   }
 }
 </script>
